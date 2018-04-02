@@ -9,7 +9,7 @@ class Standings extends React.Component {
   render() {
     let i = 0;
     return (
-      <div>
+      <div className='standings'>
         {
           this.props.standings.map((stage) => (
             <StageTable
