@@ -1,85 +1,88 @@
-/* body {
-
+body {
     padding-top: 50px;
 }
 
-.container {
-
-}
-
-.add-item .description {
-    width: 220px;
-}
-
-.add-item .description,
-.add-item .amount {
-    margin-right: 15px;
-}
-
-.add-item .amount {
-    width: 148px;
-}
-
 .app-title {
-    font-weight: 400;
-    font-size: 30px;
     color: #adadad;
-}
-
-.app-title,
-.total-budget {
+    font-size: 30px;
+    font-weight: 400;
     text-align: center;
 }
 
-.total-budget {
-    border: 1px solid #ddd;
-    border-left: none;
-    border-right: none;
-    padding: 20px 0;
-    font-size: 65px;
-    font-weight: 100;
-    margin-bottom: 15px;
-}
-
-form {
-    padding: 0 10px 15px 10px;
-    border-bottom: 1px solid #ddd;
-}
-
-.items-list {
-    margin: 0;
-    padding: 0;
-    list-style: none;
-}
-
-.items-list li {
-    border-bottom: 1px solid #ddd;
-    padding: 10px;
-}
-
-.items-list li span {
-    float: right;
-    font-weight: bold;
-}
-
-.items-list li .positive {
-    color: #3dab3d;
-}
-
-.items-list li span.negative {
-    color: #e86464;
-}
-
-.items-list .no-items {
+.modal__header {
   text-align: center;
-  color: #ddd;
+  padding-bottom: 20px;
 }
 
-
-.standings-table__team-played{
-  width: 50px;
+.select-league-form {
+    text-align: center;
 }
 
-.standings-table__position{
-  width: 50px;
-} */
+.form-label {
+    width: 100px;
+}
+
+.leagues-dropdown {
+    width: 300px;
+    padding: 20px;
+    height: 40px;
+    line-height: 20px;
+    margin: 5px 10px;
+}
+
+.fetch {
+    /* padding: 20px; */
+    height: 40px;
+    line-height: 20px;
+    margin: 5px 10px;
+}
+
+.select-league-form {
+    display: flex;
+    text-align: center;
+    justify-content: center;
+}
+
+.classification-table {
+    margin-top: 60px;
+}
+
+.rt-tr {
+    text-align: center;
+}
+
+.rt-thead {
+    font-weight: bold;
+    height: 40px;
+    padding: 5px;
+}
+
+.rt-thead, .carbon-table__header {
+    text-align: center;
+    background-color: #EBEBEB;
+}
+
+.ReactTable .rt-thead.-header {
+  box-shadow: none;
+}
+
+.ReactTable .rt-thead .rt-resizable-header {
+    overflow: hidden;
+}
+
+.club-name {
+    text-align: center;
+}
+
+carbon-table-header.squad-table__name.col {
+    padding: 5px 10px;
+}
+
+tr.carbon-table-row.row {
+    padding: 2px 10px;
+}
+
+td.carbon-table-cell {
+    padding: 2px 10px;
+}
+

@@ -9,11 +9,11 @@ class TeamModal extends React.Component {
   tableHeader() {
     return (
       <TableRow key='header' as='header'>
+        <TableHeader/>
         <TableHeader
           name='number'
           scope='col'
-          className='squad-table__number'
-          data-role='squad-table__number'
+          className='squad-table__number col'
         >
           Number
         </TableHeader>
@@ -21,24 +21,21 @@ class TeamModal extends React.Component {
         <TableHeader
           name='name'
           scope='col'
-          className='squad-table__name'
-          data-role='squad-table__name'
+          className='squad-table__name col'
         >
           Name
         </TableHeader>
         <TableHeader
           name='Position'
           scope='col'
-          className='squad-table__position'
-          data-role='squad-table__position'
+          className='squad-table__position col'
         >
           Position
         </TableHeader>
         <TableHeader
           name='nationality'
           scope='col'
-          className='squad-table__nationality'
-          data-role='squad-table__nationality'
+          className='squad-table__nationality col'
         >
           Nationality
         </TableHeader>
@@ -50,7 +47,7 @@ class TeamModal extends React.Component {
     const rows = [];
     this.props.teamSquad.map((element) => {
         rows.push(
-          <TableRow key={element.player_id} as='body'>
+          <TableRow className='row' key={element.player_id} as='body'>
             <TableCell
               name='number'
               scope='col'
@@ -93,9 +90,9 @@ class TeamModal extends React.Component {
           <div className='modal__team-logo' className='col'>
             <img src={this.props.teamInformation.logo} alt={`team-logo-${this.props.teamInformation.name}`} />
           </div>
-
-          <h3> {this.props.teamInformation.name} <small>{this.props.teamInformation.founded}</small> </h3>
         </div>
+
+        <h3 className='club-name'> {this.props.teamInformation.name} <small>{this.props.teamInformation.founded}</small> </h3>
         <div>
 
           <Table className='table squad-table' thead={ this.tableHeader() }>

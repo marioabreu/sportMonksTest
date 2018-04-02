@@ -22,28 +22,27 @@ class Form extends React.Component {
     return (
       <div>
         <form className="select-league-form" onSubmit={ this.handleSubmit }>
-          <div className='row'>
-            <div className='col'>
-              <label htmlFor='leagues'>Leagues: </label>
 
-              <select
-                id='leagues'
-                name='leagues'
-                value={this.state.value}
-                onChange={ (event) => this.setState({value: event.target.value}) }
-              >
-                <option defaultValue='selected' disabled>Please select</option>
-                {
-                  this.props.leagues.map( (league) => (
-                    league.seasons.map((season) => (
-                      <option value={season.id} key={season.id}>{league.name + ' ' +season.name}</option>
-                    ))
-                  ))
-                }
-              </select>
-            </div>
-            <div className='col'><button type='submit' className='btn btn-primary fetch'>Fetch</button></div>
-          </div>
+          {/* <label htmlFor='leagues' className='form-label'>Leagues: </label> */}
+
+          <select
+            id='leagues'
+            className='leagues-dropdown'
+            name='leagues'
+            value={this.state.value}
+            onChange={ (event) => this.setState({value: event.target.value}) }
+          >
+            <option defaultValue='selected' disabled>Please select a league/season</option>
+            {
+              this.props.leagues.map( (league) => (
+                league.seasons.map((season) => (
+                  <option value={season.id} key={season.id}>{league.name + ' ' +season.name}</option>
+                ))
+              ))
+            }
+          </select>
+          <button type='submit' className='btn btn-primary fetch'>Fetch</button>
+
         </form>
       </div>
     )

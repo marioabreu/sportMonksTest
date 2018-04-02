@@ -52,10 +52,9 @@ class StageTable extends React.Component {
       accessor: 'points',
     }];
 
-    return(
-      <div>
-        <h3>{this.props.data.stage_name} <small>Classificaion</small></h3>
-        <hr />
+    return (
+      <div className='classification-table'>
+        <h3>{this.props.data.name} <small>Classificaion</small></h3>
         <ReactTable
           data={this.props.data.standings}
           columns={columns}
