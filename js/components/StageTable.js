@@ -4,17 +4,27 @@ import ReactTable from 'react-table';
 class StageTable extends React.Component {
   constructor(props) {
     super(props);
+
+    this.handleClick = this.handleClick.bind(this);
+  }
+
+  handleClick(event) {
+    if (event === undefined) { return; }
+
+    let teamId = parseInt(event.target.id);
+    let seasonId = parseInt(this.props.data.seasonId)
+    this.props.handleTeamClick(seasonId, teamId)
   }
 
   render() {
     const columns = [{
       Header: 'Position',
-      accessor: 'position', // String-based value accessors!
+      accessor: 'position',
     }, {
       Header: 'Team Name',
       accessor: 'team_name',
       id: 'team_name',
-      accessor: d => <a href='#' id={d.team_id} onClick={this.props.dialogOpened}>{d.team_name}</a>
+      accessor: d => <a href='#' id={d.team_id} onClick={this.handleClick}>{d.team_name}</a>
     }, {
       Header: 'Played',
       accessor: 'played',

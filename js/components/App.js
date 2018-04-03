@@ -6,21 +6,7 @@ import Standings from './Standings';
 import Textbox from 'carbon-react/lib/components/textbox';
 import TeamModal from './TeamModal';
 
-
-// import DialogFullScreen from 'carbon-react/lib/components/dialog-full-screen';
-const tokens = [
-  '6WcFXpOL3OTmicAadF1V9t5aOFc4huUub1xKnfDYOkKv8GhvDy6pGXkju2mA',
-  'HOLCAStI6Z0OfdoPbjdSg5b41Q17w2W5P4WuoIBdC66Z54kUEvGWPIe33UYC',
-  '1WFHIyPjtnendfqDjtv3edGT3c7PoUaIEnov8mxx4hRerq69wQlzjkX7exI0',
-
-]
-// const TOKEN='BtvrMTb6bwYNpbk95zMlF5l11EYukogDLlms31bIsKixOS7cIfTyLKI9TJCs';
-// const TOKEN='6WcFXpOL3OTmicAadF1V9t5aOFc4huUub1xKnfDYOkKv8GhvDy6pGXkju2mA';
 const TOKEN='HOLCAStI6Z0OfdoPbjdSg5b41Q17w2W5P4WuoIBdC66Z54kUEvGWPIe33UYC';
-// const TOKEN='1WFHIyPjtnendfqDjtv3edGT3c7PoUaIEnov8mxx4hRerq69wQlzjkX7exI0';
-// const TOKEN='9OWPHwsWVgcHmJEr6RoYsWGr7rGKDrt69psUSaEsy2o83FnwMiA7Z97ZWvr7';
-
-//limitaion of 1500 request per hour
 
 const customStyles = {
   content : {
@@ -29,7 +15,9 @@ const customStyles = {
     right                 : 'auto',
     bottom                : 'auto',
     marginRight           : '-50%',
-    transform             : 'translate(-50%, -50%)'
+    transform             : 'translate(-50%, -50%)',
+    height: '750px',
+    overlfow: 'scroll'
   }
 };
 
@@ -43,12 +31,15 @@ class App extends React.Component {
       leagues: [],
       stages: [],
       dialogOpened: false,
-      teams: [],
-      logoPaths: []
+      selectedSeasonId: '',
+      selectedTeamInfo: {},
+      selectedSquad: []
     }
 
     this.openModal = this.openModal.bind(this);
     this.closeModal = this.closeModal.bind(this);
+    this.teamDetails = this.teamDetails.bind(this);
+
   }
 
   openModal() {
@@ -60,18 +51,10 @@ class App extends React.Component {
   }
 
   componentWillMount() {
-    this.fetchSoccerData();
-  }
-
-  componentDidMount(){
-
-  }
-
-  fetchSoccerData = () => {
     this.fetchLeagues(this.state.leagues);
   }
 
-  fetchLeagues(leagues) {
+  fetchLeagues = (leagues) => {
     fetch(`https://soccer.sportmonks.com/api/v2.0/leagues?api_token=${TOKEN}`)
       .then(res => res.json())
       .then((result) => {
@@ -89,15 +72,11 @@ class App extends React.Component {
     );
   }
 
-  availableData(standings){
-    return standings.filter((element) => ((element.name.indexOf('2017') >=0) || (element.name.indexOf('2018') >=0)));
-  }
-
   fetchSeasons = (leagues) => {
     fetch(`https://soccer.sportmonks.com/api/v2.0/seasons?api_token=${TOKEN}`)
     .then(res => res.json())
     .then((result) => {
-      let standings = this.availableData(result.data);
+      let standings = this._availableData(result.data);
 
       standings.map(season => {
         let league = leagues.find( (league) => league.id === season.league_id )
@@ -118,13 +97,14 @@ class App extends React.Component {
   fetchStandings = (seasonId) => {
     let stageStandings = [];
     let stageAux;
-    let teams = [];
+
     fetch(`https://soccer.sportmonks.com/api/v2.0/standings/season/${seasonId}?api_token=${TOKEN}`)
     .then(res => res.json())
     .then((result) => {
       result.data.map((stage) => {
         stageAux = {
           name: stage.name,
+          seasonId: seasonId,
           standings: []
         }
 
@@ -145,51 +125,16 @@ class App extends React.Component {
             points: standing.total.points
           }
 
-          //Atualizar tabela classificativa
           stageAux.standings.push(tempStanding);
-          let team = {
-            id: standing.team_id,
-            standing: standing,
-            squad: []
-          }
-
-          if (this.state.teams.find((t) => t.id === team.id)) {
-            console.log('Team already Saved!');
-            return;
-          }
-
-          fetch(`https://soccer.sportmonks.com/api/v2.0/squad/season/${seasonId}/team/${standing.team_id}?api_token=${TOKEN}&include=position,player`)
-          .then(res => res.json())
-          .then((result) => {
-            let elements = result.data;
-
-            elements.map((element) => {
-              let player = element.player.data;
-
-              let formatedPlayer = {
-                number: element.number,
-                name: player.common_name,
-                position: element.position.data.name,
-                height: player.height,
-                nationality: player.nationality,
-                weight: player.weight
-              }
-              team.squad.push(formatedPlayer);
-            });
-
-            this.setState((prevState) => {
-              teams: prevState.teams.push(team)
-            });
-          });
         });
 
         stageStandings.push(stageAux);
 
+        this.setState({
+          stages: stageStandings,
+          selectedSeasonId: seasonId
+        });
       });
-      this.setState({
-        stages: stageStandings
-      });
-
 
     },
     (error) => {
@@ -197,29 +142,54 @@ class App extends React.Component {
     });
   }
 
-  updateTeamIds(teamId, collection){
-    if (!collection.includes(teamId)) {
-      collection.push(teamId)
-    }
+  fetchTeamDetails(teamId) {
+    fetch(`https://soccer.sportmonks.com/api/v2.0/teams/${teamId}?api_token=${TOKEN}`)
+    .then(res => res.json())
+    .then((result) => {
+      this.setState({
+        selectedTeamInfo: {
+          logo: result.data.logo_path,
+          name: result.data.name,
+          founded: result.data.founded
+        }
+      });
+    });
+  };
+
+  fetchSquadInformation(teamId, seasonId) {
+    let squad = [];
+
+    fetch(`https://soccer.sportmonks.com/api/v2.0/squad/season/${seasonId}/team/${teamId}?api_token=${TOKEN}&include=position,player`)
+    .then(res => res.json())
+    .then((result) => {
+
+      result.data.map((element) => {
+        if (element.position === null) { alert('boom!'); }
+
+        let player = element.player.data;
+        let formatedPlayer = {
+          number: element.number,
+          name: player.common_name,
+          position: element.position.data.name,
+          height: player.height,
+          nationality: player.nationality,
+          weight: player.weight
+        }
+        squad.push(formatedPlayer);
+      });
+
+      this.setState({
+        dialogOpened: true,
+        selectedSquad: squad
+      });
+    });
   }
 
-  detailedTeamInformation(){
-    if (event === undefined) { return; }
-    let teamId = parseInt(event.target.id)
-
-    return {
-      team: this.state.teams.find((team) => team.id === teamId),
-      squad: this.state.loadedSquads.filter(x => x.team_id === teamId)
-    };
+  teamDetails(seasonId, teamId){
+    this.fetchTeamDetails(teamId);
+    this.fetchSquadInformation(teamId, seasonId);
   }
-
-  _selectedTeam(teamId) {
-    return this.state.teams.find((team) => team.id === parseInt(teamId));
-  }
-
-  modal() {
-    if (event === undefined) { return; }
-    let selectedTeamId = event.target.id;
+  squadModal() {
     return(
       <div>
         <Modal
@@ -228,7 +198,7 @@ class App extends React.Component {
           style={customStyles}
           contentLabel="Example Modal"
         >
-          <TeamModal data={this._selectedTeam(selectedTeamId)} />
+          <TeamModal teamSquad={this.state.selectedSquad} teamInformation={this.state.selectedTeamInfo} />
         </Modal>
       </div>
     )
@@ -238,25 +208,27 @@ class App extends React.Component {
     return parseInt(goals_scored) - parseInt(goals_against);
   }
 
-  // fetchTeamsImage(teamId) {
-  //   let logoPath='';
-  //   fetch(`https://soccer.sportmonks.com/api/v2.0/teams/${teamId}}?api_token=${TOKEN}`)
-  //   .then(res => res.json())
-  //   .then((result) => {
-  //     logo_path = result.data.logo_path;
-  //   });
-  //   return logoPath;
-  // };
+  _availableData(standings){
+    return standings.filter((element) => ((element.name.indexOf('2017') >=0) || (element.name.indexOf('2018') >=0)));
+  }
+
+
 
   render() {
     return (
-      <div className="container">
-        <h1 className="app-title">Soccer API</h1>
-        <Form leagues={ this.state.leagues } onSubmit={this.fetchStandings} />
-        <Standings standings={this.state.stages } dialogOpened={this.openModal}/>
-        { this.modal() }
-        { `Standings: ${this.state.standings}`}
-        { `Saved Teams: ${this.state.teams.length}`}
+      <div className='container'>
+        <div className='row'>
+          <h1 className='app-title'>Soccer API</h1>
+        </div>
+
+        <div className='row'>
+          <Form leagues={ this.state.leagues } onSubmit={this.fetchStandings} />
+        </div>
+
+        <div className='row'>
+          <Standings standings={this.state.stages } handleTeamClick={this.teamDetails} />
+        </div>
+        { this.squadModal() }
       </div>
     );
   }

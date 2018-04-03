@@ -1,10 +1,10 @@
 {
-  "name": "flux-wallet",
+  "name": "sport-monks",
   "version": "1.0.0",
-  "description": "A simple virtual wallet built using React and Flux.",
+  "description": "A simple form to fetch information from sportmonks Soccer Api",
   "main": "index.js",
-  "repository": "git@github.com:hisk/flux-wallet.git",
-  "author": "Catalin Vasile <contact@catalin.me>",
+  "repository": "git@github.com:marioabreu/sportMonksTest.git",
+  "author": "Mário Abreu",
   "license": "MIT",
   "scripts": {
     "start": "node_modules/.bin/webpack-dev-server --progress --inline --hot"
